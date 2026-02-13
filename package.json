@@ -1,0 +1,16 @@
+{
+  "name": "meet_lab5",
+  "version": "1.0.0",
+  "description": "This is file of LAB pratical 5th FULL Stack Development",
+  "keywords": [],
+  "license": "ISC",
+  "author": "MEET",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
