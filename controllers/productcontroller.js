@@ -1,31 +1,57 @@
-// Fake in-memory data for Products
-let products = [
-  { id: 1, name: 'Laptop', price: 1200, stock: 10 },
-  { id: 2, name: 'Headphones', price: 150, stock: 50 },
-  { id: 3, name: 'Keyboard', price: 80, stock: 30 }
-];
+const Product = require('../models/Product');
 
-// GET /products
-exports.getAllProducts = (req, res) => {
-  res.json(products);
+// CREATE a new product
+exports.createProduct = async (req, res) => {
+    try {
+        const newProduct = new Product(req.body);
+        const savedProduct = await newProduct.save();
+        res.status(201).json(savedProduct);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
-// GET /products/:id
-exports.getProductById = (req, res) => {
-  const id = parseInt(req.params.id);
-  const product = products.find(p => p.id === id);
-  if (!product) return res.status(404).json({ message: 'Product not found' });
-  res.json(product);
+// READ all products
+exports.getAllProducts = async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
-// POST /products
-exports.createProduct = (req, res) => {
-  const newProduct = {
-    id: products.length + 1,
-    name: req.body.name,
-    price: req.body.price,
-    stock: req.body.stock
-  };
-  products.push(newProduct);
-  res.status(201).json(newProduct);
+// READ a single product by ID
+exports.getProductById = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ message: 'Product not found' });
+        res.status(200).json(product);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// UPDATE a product by ID
+exports.updateProduct = async (req, res) => {
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(
+            req.params.id, 
+            req.body, 
+            { new: true, runValidators: true } // Returns the updated document and runs schema validation
+        );
+        res.status(200).json(updatedProduct);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// DELETE a product by ID
+exports.deleteProduct = async (req, res) => {
+    try {
+        await Product.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: 'Product successfully deleted' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
